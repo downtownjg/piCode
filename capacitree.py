@@ -47,7 +47,7 @@ def playMusic(playIt):
 	if not playIt:
 		subprocess.call(['killall', 'mpg321'])
 	elif playIt:
-		subprocess.Popen(['mpg321', 'musicFile.mp3'])
+		subprocess.Popen(['mpg321', 'Hallelujah.mp3'])
 
 # Define the main() function.
 def main():
@@ -73,12 +73,15 @@ def main():
 
 		# Turn it on while it is being touched
 		if pad1pressed and not superLights:
-			GPIO.output(relay, True)
-			if(not playing):
-				playMusic(True)
-				playing = True
-			print("Pad 1 pressed")
-		pad1alreadyPressed = pad1pressed
+			time.sleep(.5)
+			stillpressed = not GPIO.input(pad1)
+			if stillpressed:
+				GPIO.output(relay, True)
+				if(not playing):
+					playMusic(True)
+					playing = True
+				print("Pad 1 pressed")
+			pad1alreadyPressed = pad1pressed
 		
 		# Turn it off immediately when you let go
 		if not pad1pressed and not superLights:
@@ -97,15 +100,18 @@ def main():
 		pad3alreadyPressed = pad3pressed
 
 		# toggle it
-		if pad4pressed and not pad4alreadyPressed:			
-			superLights = not superLights
-			GPIO.output(relay, superLights)
-			if superLights and not playing:
-				playMusic(True)
-				playing = True
-			else:
-				playMusic(False)
-				playing = False
+		if pad4pressed and not pad4alreadyPressed:
+			time.sleep(.5)
+			stillpressed = not GPIO.input(pad4)	
+			if stillpressed:		
+				superLights = not superLights
+				GPIO.output(relay, superLights)
+				if superLights and not playing:
+					playMusic(True)
+					playing = True
+				else:
+					playMusic(False)
+					playing = False
 		pad4alreadyPressed = pad4pressed
 
 		time.sleep(0.1)
